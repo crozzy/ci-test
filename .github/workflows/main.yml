@@ -35,7 +35,7 @@ jobs:
   scan:
     needs: ['docker']
     runs-on: ubuntu-latest
-    container: quay.io/crozzy/local-clair:jank-build-2
+    container: quay.io/crozzy/local-clair:jank-build-5
     steps:
       - name: Download artifact
         uses: actions/download-artifact@master
