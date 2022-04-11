@@ -45,6 +45,11 @@ jobs:
       - name: Scan Image
         run: |
           IMAGE_PATH=/tmp/${{ github.sha }} /bin/local-clair > /tmp/${{ github.sha }}_vulnerability_report.json
+      - name: debug
+        run: |
+          microdnf install findutils
+          find / -type f -name matcher
+
       - name: Upload vulnerability report
         uses: actions/upload-artifact@master
         with:
