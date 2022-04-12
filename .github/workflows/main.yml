@@ -8,7 +8,8 @@ on:
     branches:
       - 'main'
 jobs:
-  docker:
+  docker-build:
+    name: "Docker Build"
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -34,8 +35,9 @@ jobs:
           name: built-image
           path: /tmp/${{ github.sha }}
 
-  scan:
-    needs: ['docker']
+  scan-container:
+    name: "Scan Container"
+    needs: ['docker-build']
     runs-on: ubuntu-latest
     container: quay.io/crozzy/local-clair:latest
     steps:
