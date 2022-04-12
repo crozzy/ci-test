@@ -35,7 +35,7 @@ jobs:
   scan:
     needs: ['docker']
     runs-on: ubuntu-latest
-    container: quay.io/crozzy/local-clair:jank-build-6
+    container: quay.io/crozzy/local-clair:latest
     steps:
       - name: Download artifact
         uses: actions/download-artifact@master
@@ -44,7 +44,7 @@ jobs:
           path: /tmp
       - name: Scan Image
         run: |
-          DB_PATH=/matcher IMAGE_PATH=/tmp/${{ github.sha }} /bin/local-clair > /tmp/${{ github.sha }}_vulnerability_report.json
+          DB_PATH=/matcher IMAGE_PATH=/tmp/${{ github.sha }} /bin/local-clair report > /tmp/${{ github.sha }}_vulnerability_report.json
       - name: Upload vulnerability report
         uses: actions/upload-artifact@master
         with:
