@@ -54,3 +54,8 @@ jobs:
         with:
           name: vulnerability-report
           path: /tmp/${{ github.sha }}_vulnerability_report.json
+      - name: Scan results
+        run: |
+          microdnf install jq
+          cat /tmp/${{ github.sha }}_vulnerability_report.json | jq -e ".vulnerabilities | length == 0"
+
