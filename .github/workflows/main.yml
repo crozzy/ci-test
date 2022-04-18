@@ -48,14 +48,8 @@ jobs:
           path: /tmp
       - name: Scan Image
         run: |
-          DB_PATH=/matcher IMAGE_PATH=/tmp/${{ github.sha }} /bin/local-clair report > /tmp/${{ github.sha }}_vulnerability_report.json
-      - name: Upload vulnerability report
-        uses: actions/upload-artifact@master
+          DB_PATH=/matcher IMAGE_PATH=/tmp/${{ github.sha }} /bin/local-clair report > /tmp/${{ github.sha }}_vulnerability_report.sarif
+      - name: Upload sarif
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          name: vulnerability-report
-          path: /tmp/${{ github.sha }}_vulnerability_report.json
-      - name: Scan results
-        run: |
-          microdnf install jq
-          cat /tmp/${{ github.sha }}_vulnerability_report.json | jq -e ".vulnerabilities | length == 0"
-
+          sarif_file: /tmp/${{ github.sha }}_vulnerability_report.sarif
