@@ -12,44 +12,23 @@ jobs:
     name: "Docker Build"
     runs-on: ubuntu-latest
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          push: false
-          load: true
-          tags: crozzy/great-app:${{ github.sha }}
-
-      - name: Save image
+      - name: Build an image from Dockerfile
         run: |
-          docker save -o /tmp/${{ github.sha }} crozzy/great-app:${{ github.sha }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@master
-        with:
-          name: built-image
-          path: /tmp/${{ github.sha }}
-
-  scan-container:
-    name: "Scan Container"
-    needs: ['docker-build']
-    runs-on: ubuntu-latest
-    container: quay.io/crozzy/local-clair:latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@master
-        with:
-          name: built-image
-          path: /tmp
-      - name: Scan Image
+          docker build -t crozzy/great-app:${{ github.sha }} .
+      - name: Save Docker image
         run: |
-          DB_PATH=/matcher IMAGE_PATH=/tmp/${{ github.sha }} /bin/local-clair report > /tmp/${{ github.sha }}_vulnerability_report.sarif
+          docker save -o ${{ github.sha }} crozzy/great-app:${{ github.sha }}
+      - name: Run Clair V4
+        uses: crozzy/local-clair@main
+        with:
+          image-path: /github/workspace/${{ github.sha }}
+          format: sarif
+          output: clair_results.sarif
       - name: Upload sarif
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: /tmp/${{ github.sha }}_vulnerability_report.sarif
+          sarif_file: clair_results.sarif
