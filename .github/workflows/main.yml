@@ -25,7 +25,7 @@ jobs:
       - name: Run Clair V4
         uses: crozzy/local-clair@main
         with:
-          image-path: /github/workspace/${{ github.sha }}
+          image-path: ${{ github.sha }}
           format: sarif
           output: clair_results.sarif
       - name: Upload sarif
