@@ -23,7 +23,7 @@ jobs:
         run: |
           docker save -o ${{ github.sha }} crozzy/great-app:${{ github.sha }}
       - name: Run Clair V4
-        uses: crozzy/local-clair@main
+        uses: crozzy/clair-action@main
         with:
           image-path: ${{ github.sha }}
           format: sarif
