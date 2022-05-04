@@ -1,0 +1,20 @@
+{
+    "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+    "version": "2.1.0",
+    "runs": [
+      {
+        "tool": {
+          "driver": {
+            "name": "Clair V4",
+            "informationUri": "https://github.com/quay/clair",
+            "fullName": "Clair V4 Vulnerability Scanner",
+            "version": "v0.0.1",
+            "rules": []
+          }
+        },
+        "results": [
+        ],
+        "columnKind": "utf16CodeUnits"
+      }
+    ]
+  }
