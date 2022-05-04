@@ -4,11 +4,11 @@ WORKDIR /build/
 ADD . /build/
 RUN go build .
 
-FROM registry.access.redhat.com/ubi8/ubi-minimal AS final
+FROM registry.access.redhat.com/ubi8:8.5-226.1645809065 AS final
 
 RUN set -ex\
-	; microdnf -y install python38 \
-	; microdnf -y clean all
+	; dnf -y install python38 \
+	; dnf -y clean all
 COPY requirements.txt .
 RUN set -ex\
 	; python3 -m pip install --no-cache-dir --progress-bar off\
