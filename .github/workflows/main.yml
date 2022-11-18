@@ -16,6 +16,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Grab cache DB
+        uses: actions/cache@v3
+        with:
+          path: matcher.db
+          key: matcher.db
+
       - name: Build an image from Dockerfile
         run: |
           docker build -t crozzy/great-app:${{ github.sha }} .
@@ -23,9 +29,10 @@ jobs:
         run: |
           docker save -o ${{ github.sha }} crozzy/great-app:${{ github.sha }}
       - name: Run Clair V4
-        uses: quay/clair-action@v0.0.1
+        uses: quay/clair-action@allow-update
         with:
           image-path: ${{ github.sha }}
+          db-file: matcher.db
           format: sarif
           output: clair_results.sarif
       - name: Upload artifact
