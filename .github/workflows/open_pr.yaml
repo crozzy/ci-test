@@ -1,0 +1,52 @@
+on:
+  push:
+    tags:
+      - v*.*.*
+
+name: pr-for-clair
+
+jobs:
+  send-pull-requests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        run: |
+          tag=`basename ${{ github.ref }}`
+          branch="chore-update-claircore-to-${tag}"
+          echo "VERSION=${tag}" >> $GITHUB_ENV
+          echo "BRANCH=${branch}" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Checkout everything to get access to the tags
+          ref: main
+          repository: crozzy/clair
+
+      - name: Update claircore
+        run: |
+          # Update the script files to the latest version.
+          go get github.com/quay/claircore@${{ env.VERSION }}
+          go mod tidy
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          add-paths: go.mod,go.sum
+          base: main
+          commit-message: |
+            'chore: update claircore to ${{ env.VERSION }}
+            
+            Update claircore to latest tag
+            '
+          committer: Bender <noreply@quay.io>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          branch: ${{ env.BRANCH }}
+          delete-branch: true
+          title: 'chore: update claircore to ${{ env.VERSION }}'
+          body: |
+            Update claircore to latest tag
+          labels: |
+            automated
